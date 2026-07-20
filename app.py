@@ -8,7 +8,7 @@ from sklearn.linear_model import LogisticRegression
 # ======================================================
 # Load Dataset
 # ======================================================
-df = pd.read_csv("Titanic.csv")
+model = joblib.load("titanic_prediction_model.pkl")
 
 # ======================================================
 # Data Preprocessing
