@@ -23,20 +23,30 @@ def predict_survival(age, pclass, fare):
 
     try:
         probability = model.predict_proba(input_data)[0][1]
-        probability_text = f"<br><br><b>Survival Probability:</b> {probability:.2%}"
-    except:
+        probability_text = (
+            f"<br><br><b>Survival Probability:</b> {probability:.2%}"
+        )
+    except Exception:
         probability_text = ""
 
     if prediction == 1:
-        result = "<span style='color:green;font-size:20px;'>✅ Passenger is likely to SURVIVE</span>"
+        result = """
+        <span style="color:green;font-size:22px;font-weight:bold;">
+        ✅ Passenger is likely to SURVIVE
+        </span>
+        """
     else:
-        result = "<span style='color:red;font-size:20px;'>❌ Passenger is NOT likely to SURVIVE</span>"
+        result = """
+        <span style="color:red;font-size:22px;font-weight:bold;">
+        ❌ Passenger is NOT likely to SURVIVE
+        </span>
+        """
 
     return result + probability_text
 
 
 # =====================================================
-# CSS
+# Custom CSS
 # =====================================================
 css = """
 body{
@@ -48,34 +58,40 @@ body{
     margin:auto;
 }
 
-.main-card{
-    background:white;
-    border-radius:15px;
-    padding:25px;
-}
+/* Developer Card */
 
 .dev-card{
-    background:white;
+    background:#ffffff !important;
+    color:#000000 !important;
     border:2px solid #2563eb;
     border-radius:15px;
     padding:20px;
-    color:black !important;
     box-shadow:0px 4px 12px rgba(0,0,0,0.15);
 }
 
+.dev-card *{
+    color:#000000 !important;
+}
+
 .dev-card h2{
-    color:#2563eb;
+    color:#2563eb !important;
     text-align:center;
     margin-bottom:15px;
 }
 
 .dev-card p{
+    color:#000000 !important;
     font-size:17px;
-    margin:8px 0;
-    color:black;
+    margin:10px 0;
 }
 
-.output-class textarea{
+.dev-card b{
+    color:#000000 !important;
+}
+
+/* Prediction Output */
+
+.output-class{
     font-size:18px !important;
     font-weight:bold;
 }
@@ -84,25 +100,28 @@ body{
 # =====================================================
 # Interface
 # =====================================================
-with gr.Blocks(css=css, title="Titanic Survival Prediction") as demo:
+with gr.Blocks(
+    css=css,
+    title="Titanic Survival Prediction"
+) as demo:
 
     gr.Markdown(
         """
 # 🚢 Titanic Survival Prediction
 
-Predict whether a passenger is likely to survive using a trained Logistic Regression model.
+Predict whether a passenger is likely to survive using a trained **Logistic Regression** model.
 """
     )
 
     with gr.Row():
 
-        # ================= LEFT =================
+        # Left Column
         with gr.Column(scale=2):
 
             age = gr.Number(label="Age")
 
             pclass = gr.Dropdown(
-                choices=[1,2,3],
+                choices=[1, 2, 3],
                 value=3,
                 label="Passenger Class"
             )
@@ -114,9 +133,9 @@ Predict whether a passenger is likely to survive using a trained Logistic Regres
                 variant="primary"
             )
 
-            output = gr.HTML(label="Prediction")
+            output = gr.HTML()
 
-        # ================= RIGHT =================
+        # Right Column
         with gr.Column(scale=1):
 
             gr.HTML("""
@@ -146,7 +165,7 @@ Predict whether a passenger is likely to survive using a trained Logistic Regres
     )
 
 # =====================================================
-# Launch
+# Launch App
 # =====================================================
 if __name__ == "__main__":
     demo.launch(
