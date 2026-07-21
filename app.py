@@ -13,26 +13,24 @@ model = joblib.load("titanic_prediction_model.pkl")
 # =====================================================
 def predict_survival(age, pclass, fare):
 
-    input_data = pd.DataFrame(
-        {
-            "age": [age],
-            "pclass": [pclass],
-            "fare": [fare]
-        }
-    )
+    input_data = pd.DataFrame({
+        "age": [age],
+        "pclass": [pclass],
+        "fare": [fare]
+    })
 
     prediction = model.predict(input_data)[0]
 
     try:
         probability = model.predict_proba(input_data)[0][1]
-        probability_text = f"\n\nSurvival Probability: {probability:.2%}"
+        probability_text = f"<br><br><b>Survival Probability:</b> {probability:.2%}"
     except:
         probability_text = ""
 
     if prediction == 1:
-        result = "✅ Passenger is likely to SURVIVE"
+        result = "<span style='color:green;font-size:20px;'>✅ Passenger is likely to SURVIVE</span>"
     else:
-        result = "❌ Passenger is NOT likely to SURVIVE"
+        result = "<span style='color:red;font-size:20px;'>❌ Passenger is NOT likely to SURVIVE</span>"
 
     return result + probability_text
 
@@ -41,71 +39,111 @@ def predict_survival(age, pclass, fare):
 # CSS
 # =====================================================
 css = """
-.gradio-container{
+body{
     background:#f3f4f6;
 }
 
-.glass{
+.gradio-container{
+    max-width:1200px !important;
+    margin:auto;
+}
+
+.main-card{
     background:white;
-    padding:20px;
     border-radius:15px;
+    padding:25px;
+}
+
+.dev-card{
+    background:white;
+    border:2px solid #2563eb;
+    border-radius:15px;
+    padding:20px;
+    color:black !important;
+    box-shadow:0px 4px 12px rgba(0,0,0,0.15);
+}
+
+.dev-card h2{
+    color:#2563eb;
+    text-align:center;
+    margin-bottom:15px;
+}
+
+.dev-card p{
+    font-size:17px;
+    margin:8px 0;
+    color:black;
+}
+
+.output-class textarea{
+    font-size:18px !important;
+    font-weight:bold;
 }
 """
 
 # =====================================================
-# Gradio Interface
+# Interface
 # =====================================================
 with gr.Blocks(css=css, title="Titanic Survival Prediction") as demo:
 
-    with gr.Column(elem_classes="glass"):
-
-        gr.Markdown(
-            """
+    gr.Markdown(
+        """
 # 🚢 Titanic Survival Prediction
 
 Predict whether a passenger is likely to survive using a trained Logistic Regression model.
 """
-        )
+    )
 
-        with gr.Row():
+    with gr.Row():
 
-            with gr.Column():
+        # ================= LEFT =================
+        with gr.Column(scale=2):
 
-                age = gr.Number(label="Age")
+            age = gr.Number(label="Age")
 
-                pclass = gr.Dropdown(
-                    choices=[1, 2, 3],
-                    value=3,
-                    label="Passenger Class"
-                )
+            pclass = gr.Dropdown(
+                choices=[1,2,3],
+                value=3,
+                label="Passenger Class"
+            )
 
-                fare = gr.Number(label="Fare")
+            fare = gr.Number(label="Fare")
 
-                predict_btn = gr.Button("Predict Survival")
+            predict_btn = gr.Button(
+                "Predict Survival",
+                variant="primary"
+            )
 
-                output = gr.Textbox(label="Prediction")
+            output = gr.HTML(label="Prediction")
 
-            with gr.Column():
+        # ================= RIGHT =================
+        with gr.Column(scale=1):
 
-                gr.Markdown("""
-## 👩‍💻 Developer
+            gr.HTML("""
+<div class="dev-card">
 
-**Name:** Manya Singla
+<h2>👩‍💻 Developer Details</h2>
 
-**College:** Panipat Institute of Engineering and Technology
+<p><b>Name:</b> Manya Singla</p>
 
-**Model:** Logistic Regression
+<p><b>College:</b> Panipat Institute of Engineering and Technology</p>
 
-**Language:** Python
+<p><b>Machine Learning Model:</b> Logistic Regression</p>
 
-**Framework:** Gradio
+<p><b>Programming Language:</b> Python</p>
+
+<p><b>Framework:</b> Gradio</p>
+
+<p><b>Deployment:</b> Render</p>
+
+</div>
 """)
 
-        predict_btn.click(
-            fn=predict_survival,
-            inputs=[age, pclass, fare],
-            outputs=output
-        )
+    predict_btn.click(
+        fn=predict_survival,
+        inputs=[age, pclass, fare],
+        outputs=output
+    )
 
 # =====================================================
 # Launch
